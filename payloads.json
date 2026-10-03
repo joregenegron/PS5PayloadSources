@@ -8,5 +8,15 @@
     "last_update": "2026-09-26",
     "version": "v1.9.0",
     "category": "Utilities & Tools"
+  },
+  {
+    "name": "LegacyJB",
+    "filename": "LegacyJB.elf",
+    "url": "https://github.com/Phoenixx1202/LegacyJB/releases/download/1.2.1/LegacyJB.elf",
+    "source": "https://github.com/Phoenixx1202/LegacyJB/releases",
+    "description": "PS5 payload providing a jailbreak service and Homebrew Store and Itemzflow compatibility for supported firmware versions.",
+    "last_update": "2026-09-29",
+    "version": "v1.2.1",
+    "category": "Jailbreak & Homebrew"
   }
 ]
