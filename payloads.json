@@ -18,6 +18,15 @@
       "description": "PS5 payload providing a jailbreak service and Homebrew Store and Itemzflow compatibility for supported firmware versions.",
       "version": "1.2.1",
       "category": "Jailbreak & Homebrew"
-    }
+    },
+    {
+  "name": "Tailscale",
+  "filename": "tailscale.elf",
+  "url": "https://github.com/holdmysocks/ps5-tailscale/releases/download/v0.5.2/tailscale.elf",
+  "description": "Tailscale client for jailbroken PS5 consoles.",
+  "version": "v0.5.2",
+  "category": "Networking & Tools"
+}
+
   ]
 }
