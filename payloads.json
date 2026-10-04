@@ -1,21 +1,21 @@
 {
-  "name": "PS5 Custom Payloads",
-  "payloads": [
-    {
-      "name": "Pegasus DL",
-      "filename": "pegasus_dl.elf",
-      "url": "https://github.com/joregenegron/PS5PayloadSources/releases/download/PS5CustomPayloads/pegasus_dl.elf",
-      "description": "Direct package downloading tool for exploited PlayStation 5 consoles.",
-      "version": "v1.9.0",
-      "category": "Utilities & Tools"
-    },
-    {
-      "name": "LegacyJB",
-      "filename": "LegacyJB.elf",
-      "url": "https://github.com/joregenegron/PS5PayloadSources/releases/download/PS5CustomPayloads/LegacyJB.elf",
-      "description": "PS5 jailbreak service payload for supported applications.",
-      "version": "v1.2.1",
-      "category": "System & Jailbreak"
-    }
-  ]
+"name": "PS5 Custom Payloads",
+"payloads": [
+{
+"name": "Pegasus DL",
+"filename": "pegasus_dl.elf",
+"url": "https://github.com/pegasus-ps5/pegasus-dl/releases/download/v1.9.0/pegasus_dl.elf",
+"description": "Direct package downloading tool for exploited PlayStation 5 consoles.",
+"version": "v1.9.0",
+"category": "Utilities & Tools"
+},
+{
+"name": "LegacyJB",
+"filename": "LegacyJB.elf",
+"url": "https://github.com/Phoenixx1202/LegacyJB/releases/download/1.2.1/LegacyJB.elf",
+"description": "PS5 payload providing a jailbreak service and Homebrew Store and Itemzflow compatibility for supported firmware versions.",
+"version": "v1.2.1",
+"category": "Jailbreak & Homebrew"
+}
+]
 }
