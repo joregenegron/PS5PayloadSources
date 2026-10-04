@@ -22,11 +22,10 @@
     {
   "name": "Tailscale",
   "filename": "tailscale.elf",
-  "url": "https://github.com/holdmysocks/ps5-tailscale/releases/download/v0.5.2/tailscale-installer.elf",
+  "url": "https://github.com/holdmysocks/ps5-tailscale/releases/download/v0.5.2/tailscale.elf",
   "description": "Tailscale client for jailbroken PS5 consoles.",
   "version": "v0.5.2",
   "category": "Networking & Tools"
 }
-
   ]
 }
