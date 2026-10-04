@@ -1,1 +1,97 @@
 
+name: Update Pegasus DL
+
+on:
+schedule:
+- cron: "17 */6 * * *"
+workflow_dispatch:
+
+permissions:
+contents: write
+
+jobs:
+update-pegasus:
+runs-on: ubuntu-latest
+
+steps:
+  - name: Checkout repository
+    uses: actions/checkout@v4
+
+  - name: Update Pegasus DL
+    env:
+      GH_TOKEN: ${{ github.token }}
+    run: |
+      python3 <<'PY'
+      import json
+      import subprocess
+      import urllib.request
+
+      REPO = "pegasus-ps5/pegasus-dl"
+      FILE = "payloads.json"
+
+      req = urllib.request.Request(
+          f"https://api.github.com/repos/{REPO}/releases/latest",
+          headers={
+              "Accept": "application/vnd.github+json",
+              "User-Agent": "PS5PayloadSources-Updater"
+          }
+      )
+
+      with urllib.request.urlopen(req) as response:
+          release = json.load(response)
+
+      tag = release["tag_name"]
+
+      asset = next(
+          (
+              a for a in release.get("assets", [])
+              if a["name"] == "pegasus_dl.elf"
+          ),
+          None
+      )
+
+      if asset is None:
+          raise SystemExit(
+              f"pegasus_dl.elf was not found in release {tag}"
+          )
+
+      download_url = asset["browser_download_url"]
+
+      with open(FILE, "r", encoding="utf-8") as f:
+          data = json.load(f)
+
+      for payload in data["payloads"]:
+          if payload["filename"] == "pegasus_dl.elf":
+              old_version = payload.get("version")
+              old_url = payload.get("url")
+
+              payload["version"] = tag
+              payload["url"] = download_url
+
+              print(f"Old version: {old_version}")
+              print(f"New version: {tag}")
+              print(f"Old URL: {old_url}")
+              print(f"New URL: {download_url}")
+              break
+      else:
+          raise SystemExit("Pegasus DL entry was not found")
+
+      with open(FILE, "w", encoding="utf-8") as f:
+          json.dump(data, f, indent=2)
+          f.write("\n")
+      PY
+
+  - name: Commit changes
+    run: |
+      git config user.name "github-actions[bot]"
+      git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      git add payloads.json
+
+      if git diff --cached --quiet; then
+        echo "No update needed."
+        exit 0
+      fi
+
+      git commit -m "Update Pegasus DL to latest release"
+      git push
