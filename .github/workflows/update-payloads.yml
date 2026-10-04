@@ -1,149 +1,148 @@
 name: Update Payloads
 
 on:
-schedule:
-- cron: "17 */6 * * *"
-workflow_dispatch:
+  schedule:
+    - cron: "17 */6 * * *"
+  workflow_dispatch:
 
 permissions:
-contents: write
+  contents: write
 
 jobs:
-update-payloads:
-runs-on: ubuntu-latest
+  update-payloads:
+    runs-on: ubuntu-latest
 
-steps:
-  - name: Checkout repository
-    uses: actions/checkout@v4
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-  - name: Update payloads
-    env:
-      GH_TOKEN: ${{ github.token }}
-    run: |
-      python3 <<'PY'
-      import json
-      import subprocess
-      import urllib.request
-      from urllib.parse import urlparse
+      - name: Update payloads
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python3 <<'PY'
+          import json
+          import urllib.request
+          from urllib.parse import urlparse
 
-      FILE = "payloads.json"
+          FILE = "payloads.json"
 
-      def github_api(url):
-          req = urllib.request.Request(
-              url,
-              headers={
-                  "Accept": "application/vnd.github+json",
-                  "User-Agent": "PS5PayloadSources-Updater"
-              }
-          )
-
-          with urllib.request.urlopen(req, timeout=30) as response:
-              return json.load(response)
-
-      def github_repo(source):
-          parsed = urlparse(source)
-          parts = parsed.path.strip("/").split("/")
-
-          if len(parts) < 2:
-              return None
-
-          return f"{parts[0]}/{parts[1]}"
-
-      with open(FILE, "r", encoding="utf-8") as f:
-          data = json.load(f)
-
-      changed = False
-
-      for payload in data.get("payloads", []):
-
-          source = payload.get("source")
-          filename = payload.get("filename")
-
-          if not source or not filename:
-              print(
-                  f"Skipping {payload.get('name', 'unknown')}: "
-                  "missing source or filename"
+          def github_api(url):
+              req = urllib.request.Request(
+                  url,
+                  headers={
+                      "Accept": "application/vnd.github+json",
+                      "User-Agent": "PS5PayloadSources-Updater"
+                  }
               )
-              continue
 
-          repo = github_repo(source)
+              with urllib.request.urlopen(req, timeout=30) as response:
+                  return json.load(response)
 
-          if not repo:
-              print(
-                  f"Skipping {payload.get('name', 'unknown')}: "
-                  "invalid GitHub source"
-              )
-              continue
+          def github_repo(source):
+              parsed = urlparse(source)
+              parts = parsed.path.strip("/").split("/")
 
-          print(f"\nChecking {payload.get('name', 'unknown')}")
-          print(f"Repository: {repo}")
-          print(f"Filename: {filename}")
+              if len(parts) < 2:
+                  return None
 
-          try:
-              release = github_api(
-                  f"https://api.github.com/repos/{repo}/releases/latest"
-              )
-          except Exception as e:
-              print(f"Could not get latest release: {e}")
-              continue
+              return f"{parts[0]}/{parts[1]}"
 
-          tag = release.get("tag_name")
+          with open(FILE, "r", encoding="utf-8") as f:
+              data = json.load(f)
 
-          if not tag:
-              print("No release tag found.")
-              continue
+          changed = False
 
-          matching_assets = [
-              asset
-              for asset in release.get("assets", [])
-              if asset.get("name") == filename
-          ]
+          for payload in data.get("payloads", []):
 
-          if len(matching_assets) != 1:
-              print(
-                  f"Skipping: expected exactly one asset named "
-                  f"{filename}, found {len(matching_assets)}"
-              )
-              continue
+              source = payload.get("source")
+              filename = payload.get("filename")
 
-          asset = matching_assets[0]
-          new_url = asset["browser_download_url"]
+              if not source or not filename:
+                  print(
+                      f"Skipping {payload.get('name', 'unknown')}: "
+                      "missing source or filename"
+                  )
+                  continue
 
-          old_version = payload.get("version")
-          old_url = payload.get("url")
+              repo = github_repo(source)
 
-          if old_version == tag and old_url == new_url:
-              print("Already up to date.")
-              continue
+              if not repo:
+                  print(
+                      f"Skipping {payload.get('name', 'unknown')}: "
+                      "invalid GitHub source"
+                  )
+                  continue
 
-          print(f"Updating {old_version} -> {tag}")
+              print(f"\nChecking {payload.get('name', 'unknown')}")
+              print(f"Repository: {repo}")
+              print(f"Filename: {filename}")
 
-          payload["version"] = tag
-          payload["url"] = new_url
+              try:
+                  release = github_api(
+                      f"https://api.github.com/repos/{repo}/releases/latest"
+                  )
+              except Exception as e:
+                  print(f"Could not get latest release: {e}")
+                  continue
 
-          changed = True
+              tag = release.get("tag_name")
 
-      if changed:
-          with open(FILE, "w", encoding="utf-8") as f:
-              json.dump(data, f, indent=2)
-              f.write("\n")
+              if not tag:
+                  print("No release tag found.")
+                  continue
 
-          print("\nPayload catalog updated.")
-      else:
-          print("\nNo changes required.")
-      PY
+              matching_assets = [
+                  asset
+                  for asset in release.get("assets", [])
+                  if asset.get("name") == filename
+              ]
 
-  - name: Commit changes
-    run: |
-      git config user.name "github-actions[bot]"
-      git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+              if len(matching_assets) != 1:
+                  print(
+                      f"Skipping: expected exactly one asset named "
+                      f"{filename}, found {len(matching_assets)}"
+                  )
+                  continue
 
-      git add payloads.json
+              asset = matching_assets[0]
+              new_url = asset["browser_download_url"]
 
-      if git diff --cached --quiet; then
-        echo "No changes to commit."
-        exit 0
-      fi
+              old_version = payload.get("version")
+              old_url = payload.get("url")
 
-      git commit -m "Update payload versions"
-      git push
+              if old_version == tag and old_url == new_url:
+                  print("Already up to date.")
+                  continue
+
+              print(f"Updating {old_version} -> {tag}")
+
+              payload["version"] = tag
+              payload["url"] = new_url
+
+              changed = True
+
+          if changed:
+              with open(FILE, "w", encoding="utf-8") as f:
+                  json.dump(data, f, indent=2)
+                  f.write("\n")
+
+              print("\nPayload catalog updated.")
+          else:
+              print("\nNo changes required.")
+          PY
+
+      - name: Commit changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add payloads.json
+
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+            exit 0
+          fi
+
+          git commit -m "Update payload versions"
+          git push
