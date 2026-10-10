@@ -4,10 +4,10 @@
     {
       "name": "Pegasus DL",
       "filename": "pegasus_dl.elf",
-      "url": "https://github.com/pegasus-ps5/pegasus-dl/releases/download/v1.10.1/pegasus_dl.elf",
+      "url": "https://github.com/pegasus-ps5/pegasus-dl/releases/download/v1.11.0/pegasus_dl.elf",
       "source": "https://github.com/pegasus-ps5/pegasus-dl",
       "description": "Direct package downloading tool for exploited PlayStation 5 consoles.",
-      "version": "v1.10.1",
+      "version": "v1.11.0",
       "category": "Utilities & Tools"
     },
     {
@@ -20,12 +20,12 @@
       "category": "Jailbreak & Homebrew"
     },
     {
-  "name": "Tailscale",
-  "filename": "tailscale.elf",
-  "url": "https://github.com/holdmysocks/ps5-tailscale/releases/download/v0.5.2/tailscale.elf",
-  "description": "Tailscale client for jailbroken PS5 consoles.",
-  "version": "v0.5.2",
-  "category": "Networking & Tools"
-}
+      "name": "Tailscale",
+      "filename": "tailscale.elf",
+      "url": "https://github.com/holdmysocks/ps5-tailscale/releases/download/v0.5.2/tailscale.elf",
+      "description": "Tailscale client for jailbroken PS5 consoles.",
+      "version": "v0.5.2",
+      "category": "Networking & Tools"
+    }
   ]
 }
